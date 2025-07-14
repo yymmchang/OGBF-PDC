@@ -6,27 +6,24 @@ Created on 08-Dec-2015
 
 from Crypto.Random import random
 
-def modifiedPower(n,m,mod): #(n**m)%mod
-    m=bin(m)[2:]      
-    i=len(m)-1
-    power=n
-    a=1
-    while i!=0:
-        power = (power * power)%mod
-        if m[a]=="1":
-            power = (power * n)%mod
-        a+=1    
-        i-=1
-        
-    return power
+def modifiedPower(n, m, mod):
+    """Efficient modular exponentiation: (n ** m) % mod"""
+    result = 1
+    n = n % mod
+    while m > 0:
+        if m % 2 == 1:
+            result = (result * n) % mod
+        n = (n * n) % mod
+        m = m // 2
+    return result
 
 
-def euclid(n,m):
-    if m==0:
-        return n,1,0
+def euclid(n, m):
+    if m == 0:
+        return n, 1, 0
     else:
-        g,a,b = euclid(m,n%m)
-        return g,b,(a-((n/m)*b))
+        g, a, b = euclid(m, n % m)
+        return g, b, a - (n // m) * b
 
 def millerRabin(p):
     i=0
@@ -58,4 +55,3 @@ def generate_prime():
             break
     
     return g,p,q
-    

@@ -31,8 +31,11 @@ class OTRecv():
         client_socket = self.s
         final = []
         k=random.randrange(1,self.q+1);
-        for i in xrange(number_of_OT):
-            print i
+        for i in range(number_of_OT):
+            print(f"i={i}, X[i]={X[i]}")
+            if X[i] not in [0, 1]:
+                print(f"Warning: X[{i}] is not 0 or 1: {X[i]}")
+                X[i] = 0
             c=int(client_socket.recv(200))
             pk=list()
             #print pk
@@ -41,13 +44,20 @@ class OTRecv():
             while gcd != 1 and inv <= 0 :
                 gcd,inv,ui = euclid(modifiedPower(self.g,k,self.q),self.q)
             pk.insert(1-X[i],(c*inv)%self.q)
-            client_socket.send(str(pk[0]))
+            if not str(pk[0]).isdigit():
+                print(f"Warning: pk[0] is not digit: {pk[0]}")
+                pk[0] = 0
+            client_socket.send(str(pk[0]).encode())
             gr=client_socket.recv(200)
+            #print("Received gr:", gr)
+            gr = gr.decode().strip()
+            if not gr:
+                raise Exception("Received empty gr from server")
+            grk = modifiedPower(int(gr), k, self.q)
             M0=client_socket.recv(lam)
             M1=client_socket.recv(lam)
             E=[M0,M1]
-            grk = modifiedPower(int(gr),k,self.q)
-            r_guess0=(hashlib.sha512(str(grk)+str(X[i])).digest())
+            r_guess0=hashlib.sha512((str(grk)+str(X[i])).encode()).digest()
             f=str(r_guess0)* int(math.ceil(number_of_OT/len(r_guess0))+1)
             T=int(E[X[i]],2)^ord(f[i])
             final.append(T)

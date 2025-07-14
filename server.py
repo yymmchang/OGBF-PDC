@@ -19,7 +19,7 @@ q = 4889130196785518327090094348640387030863521741947592925012240939087466704338
 
 
 lam = bloomServer.getLambda()
-M0 = [random.getrandbits(lam) for i in xrange(len(GBFs))]
+M0 = [random.getrandbits(lam) for i in range(len(GBFs))]
 OTs = OTSender(generator, prime, q)
 
 OTs.Obliviously_Send(M0, GBFs, len(GBFs), lam)

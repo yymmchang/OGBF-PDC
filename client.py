@@ -10,6 +10,9 @@ bloomClient = Bloom(clientSet)
 bloomClient.generateBloom()
 BFc = bloomClient.getBloom()
 
+#print("BFc:", BFc)
+print("Unique values in BFc:", set(BFc))
+
 
 
 generator = 2045999832912957017696899038249723031652808586302786492701737751786256859920910559231421909153586598647911069920255352007045971901844488687357123721071418415
@@ -19,8 +22,10 @@ q = 4889130196785518327090094348640387030863521741947592925012240939087466704338
 
 OTc = OTRecv(generator, prime, q)
 lam = bloomClient.getLambda()
-print "started"
+print ("started")
 GBFi =  OTc.obliviouslyReceive(BFc, len(BFc), lam)
 for share in clientSet:
-    print share, bloomClient.queryGarbled(share, GBFi)
+    print (share, bloomClient.queryGarbled(share, GBFi))
+for i, share in enumerate(clientSet):
+    print(f"i={i}, share={share}, present={bloomClient.queryGarbled(share, GBFi)}")
 

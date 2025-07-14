@@ -16,8 +16,8 @@ class Bloom:
         self.inputArray = inputArray
         '''Length of bloom filter and garbled bloom filter'''
         self.m = 512
-        self.garbledBloomArray = [None for i in xrange(self.m)]
-        self.bloomArray = [0 for i in xrange(self.m)]
+        self.garbledBloomArray = [None for i in range(self.m)]
+        self.bloomArray = [0 for i in range(self.m)]
 
     def getLambda(self):
         return self.lam
@@ -34,9 +34,9 @@ class Bloom:
     def generateBloom(self):
         for element in self.inputArray:
             h = [hashlib.sha1(), hashlib.sha384(), hashlib.sha512()]
-            for i in xrange(len(h)):
+            for i in range(len(h)):
                 val = h[i]
-                val.update(str(element))
+                val.update(str(element).encode())
                 j = int(val.hexdigest(), base=16) % self.m
                 self.bloomArray[j]=1
     
@@ -46,9 +46,9 @@ class Bloom:
             emptySlot = -1
             finalShare = element
             h = [hashlib.sha1(), hashlib.sha384(), hashlib.sha512()]
-            for i in xrange(len(h)):
+            for i in range(len(h)):
                 val = h[i]
-                val.update(str(element))
+                val.update(str(element).encode())
                 j = int(val.hexdigest(), base=16) % self.m
                 if(self.garbledBloomArray[j]==None):
                     if(emptySlot==-1):
@@ -60,16 +60,16 @@ class Bloom:
                 else:
                     finalShare = finalShare ^ self.garbledBloomArray[j]
             self.garbledBloomArray[emptySlot] = finalShare
-        for i in xrange(self.m):
+        for i in range(self.m):
             if(self.garbledBloomArray[i]==None):
                 self.garbledBloomArray[i] = random.getrandbits(self.lam)
                 
     
     def queryBloom(self, x):
         h = [hashlib.sha1(), hashlib.sha384(), hashlib.sha512()]
-        for i in xrange(len(h)):
+        for i in range(len(h)):
             val = h[i]
-            val.update(str(x))
+            val.update(str(x).encode())
             j = int(val.hexdigest(), base=16) % self.m
             if(self.bloomArray[j]==0):
                 return False
@@ -79,9 +79,9 @@ class Bloom:
     def queryGarbled(self, x, GBF):
         recovered = 0
         h = [hashlib.sha1(), hashlib.sha384(), hashlib.sha512()]
-        for i in xrange(len(h)):
+        for i in range(len(h)):
             val = h[i]
-            val.update(str(x))
+            val.update(str(x).encode())
             j = int(val.hexdigest(), base=16) % self.m
             recovered = recovered ^ GBF[j]
         if(recovered == x):
@@ -90,8 +90,8 @@ class Bloom:
             return False
     
     def generateIntersection(self, GBF):
-        GBFint = [None for i in xrange(self.m)]
-        for i in xrange(len(self.bloomArray)):
+        GBFint = [None for i in range(self.m)]
+        for i in range(len(self.bloomArray)):
             if(self.bloomArray[i]==0):
                 GBFint[i]=random.getrandbits(self.lam)
             else:
@@ -106,4 +106,4 @@ b.generateBloom()
 inter = b.generateIntersection(a.getGarbledBloom())
 for x in [3,4,5,6]:
     if(b.queryGarbled(x, inter)):
-        print x
+        print (x)

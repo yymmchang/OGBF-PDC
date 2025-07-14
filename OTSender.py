@@ -31,26 +31,30 @@ class OTSender():
     '''  M0 random lambda bit string and M1 actual string '''
     def Obliviously_Send(self, M0,M1,num_of_OT, lam):
         conn = self.conn
-        for i in xrange(num_of_OT):
-            print i
+        for i in range(num_of_OT):
+            print (i)
             r=random.randrange(self.q)
             c=random.randrange(self.q)
-            conn.send(str(c))
+            conn.send(str(c).encode())
             pk0 = conn.recv(200) #you should receive pk0 from the receiver via the sender_receiver channel
-            pk0r=modifiedPower(int(pk0),r,self.q)
+            #print("Received pk0:", pk0)
+            pk0 = pk0.decode().strip()
+            if not pk0.isdigit():
+                raise Exception(f"Received invalid pk0: {pk0}")
+            pk0r = modifiedPower(int(pk0), r, self.q)
             gr=modifiedPower(self.g,r,self.q)
-            r0=(hashlib.sha512(str(pk0r)+str(0)).digest())
+            r0=hashlib.sha512((str(pk0r)+str(0)).encode()).digest()
             r00=str(r0)* int(math.ceil(num_of_OT/len(r0))+1)
             cr=modifiedPower(c,r,self.q)
             gcd=inv=-1
             while gcd != 1 and inv <= 0 :
                 gcd,inv,k = euclid(pk0r,self.q)
             pk1r=cr*inv%self.q
-            r1=(hashlib.sha512(str(pk1r)+str(1)).digest())
+            r1=hashlib.sha512((str(pk1r)+str(1)).encode()).digest()
             r10=str(r1) * int(math.ceil(num_of_OT/len(r1))+1)
             E0=bin(int(M0[i])^ord(r00[i]))[2:].zfill(lam)
             E1=bin(int(M1[i])^ord(r10[i]))[2:].zfill(lam)
-            conn.send(str(gr))
-            conn.send(str(E0))
-            conn.send(str(E1))
+            conn.send(str(gr).encode())
+            conn.send(str(E0).encode())
+            conn.send(str(E1).encode())
         return True
