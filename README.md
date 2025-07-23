@@ -1,7 +1,7 @@
 # GarbledBloomFilters
-Private set intersection using garbled bloom filters in semi-honest setting
+Private Data Cleaning using garbled bloom filters in semi-honest setting
 
-Implementation of the Private set intersection protocol in the paper https://eprint.iacr.org/2013/515.pdf
+Base on the implementation of the Private set intersection protocol in the paper https://eprint.iacr.org/2013/515.pdf
 
 Test implementation:
 * Run server.py
