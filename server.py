@@ -3,7 +3,23 @@ from Bloom import Bloom
 from OTSender import OTSender
 import random
 
-server_data = [("E", "elephant"),("B", "dog"), ("C", "bird"), ("D", "fish")]
+
+# 讀取 nameC.txt 並解析成 (key, label) 格式
+def load_data_from_txt(filepath):
+    data = []
+    with open(filepath, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            parts = line.split(',')
+            if len(parts) == 2:
+                key = parts[0].strip()
+                label = parts[1].strip()
+                data.append((key, label))
+    return data
+
+server_data = load_data_from_txt("nameS.txt")
 prefix_inputs = []
 for key, label in server_data:
     prefixes = encode_label_to_prefixes(label)

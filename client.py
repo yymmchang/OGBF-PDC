@@ -1,8 +1,24 @@
+
 from prefix_encoding import encode_label_to_prefixes
 from Bloom import Bloom
 from OTRecv import OTRecv
 
-client_data = [("A", "cat"), ("B", "dig"), ("C", "bird")]
+# 讀取 nameC.txt 並解析成 (key, label) 格式
+def load_data_from_txt(filepath):
+    data = []
+    with open(filepath, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            parts = line.split(',')
+            if len(parts) == 2:
+                key = parts[0].strip()
+                label = parts[1].strip()
+                data.append((key, label))
+    return data
+
+client_data = load_data_from_txt("nameC.txt")
 encoded_prefixes = []
 key_label_map = {}
 for key, label in client_data:
@@ -27,5 +43,5 @@ for key, prefixes in key_label_map.items():
     match_count = sum(1 for p in prefixes if bloom.queryGarbled(key + ":" + p, GBFi))
     if match_count != len(prefixes):
         misclassified_keys.append((key, match_count, len(prefixes)))
-
-print("[Client] Misclassified keys:", misclassified_keys)
+    if match_count == 1:
+        print("[Client] Misclassified key:", (key, match_count, len(prefixes)))
